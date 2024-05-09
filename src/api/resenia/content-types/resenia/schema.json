@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resenias",
+  "info": {
+    "singularName": "resenia",
+    "pluralName": "resenias",
+    "displayName": "resenia",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "texto": {
+      "type": "text"
+    },
+    "fecha": {
+      "type": "date"
+    },
+    "puntuacion": {
+      "type": "decimal"
+    },
+    "emisor": {
+      "type": "string"
+    },
+    "pelicula": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::pelicula.pelicula",
+      "inversedBy": "resenias"
+    },
+    "id_emisor": {
+      "type": "biginteger",
+      "unique": true,
+      "required": true,
+      "min": "0"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "peliculas",
+  "info": {
+    "singularName": "pelicula",
+    "pluralName": "peliculas",
+    "displayName": "pelicula",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "titulo": {
+      "type": "string"
+    },
+    "duracion": {
+      "type": "integer"
+    },
+    "genero": {
+      "type": "text"
+    },
+    "descripcion": {
+      "type": "text"
+    },
+    "puntuacion": {
+      "type": "decimal",
+      "default": 0
+    },
+    "director": {
+      "type": "string"
+    },
+    "actores": {
+      "type": "text"
+    },
+    "estreno": {
+      "type": "date",
+      "required": true
+    },
+    "caratula": {
+      "type": "text"
+    },
+    "resenias": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::resenia.resenia",
+      "mappedBy": "pelicula"
+    }
+  }
+}
