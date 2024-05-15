@@ -1,4 +1,3 @@
-version: "3"
 services:
   strapi:
     container_name: strapi
@@ -41,7 +40,7 @@ services:
       POSTGRES_DB: ${DATABASE_NAME}
     volumes:
       - strapi-data:/var/lib/postgresql/data/
-      - ./backend/database/migrations/mydatabase.sql:/docker-entrypoint-initdb.d/mydatabase.sql
+      - ./db/mydatabase.sql:/docker-entrypoint-initdb.d/mydatabase.sql
     ports:
       - "5432:5432"
     networks:
