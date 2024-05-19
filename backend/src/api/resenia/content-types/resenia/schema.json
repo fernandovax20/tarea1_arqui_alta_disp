@@ -32,7 +32,7 @@
     },
     "id_emisor": {
       "type": "biginteger",
-      "unique": true,
+      "unique": false,
       "required": true,
       "min": "0"
     }
