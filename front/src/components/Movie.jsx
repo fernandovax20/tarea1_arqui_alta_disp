@@ -10,11 +10,10 @@ const Movie = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [reviewContent, setReviewContent] = useState('');
   const isAuthenticated = !!localStorage.getItem('token');
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
-  const [id_review, setIdReview] = useState(0);
+  const [showIt, setShowIt] = useState(false);
 
   useEffect(() => {
     axios.get(url + '/api/peliculas')
@@ -70,7 +69,8 @@ const Movie = () => {
           Authorization: `Bearer ${token}`
         }
       });
-      setReviewContent('');
+      setComment('');
+      setRating(0);
       fetchReviews();
     } catch (error) {
       console.error('Error submitting the review', error);
@@ -91,8 +91,29 @@ const Movie = () => {
     }
   };
 
-  const handleUpdateReview = async (e) => {
+  const handleUpdateReview = id => async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Error authenticating');
+      return;
+    }
+    try {
+      const data = {
+        texto: comment,
+        puntuacion: rating
+      }
+      await axios.put(url + '/api/resenias/' + id, { data: data }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setComment('');
+      setRating(0);
+      fetchReviews();
+    } catch (error) {
+      console.error('Error updating the review', error);
+    }
   };
 
   if (!movie) {
@@ -139,7 +160,7 @@ const Movie = () => {
                 <h1>
 
                 </h1>
-                <button type="submit" className="p-2 bg-blue-500 text-white rounded">Submit Review</button>
+                <button type="submit" className="p-2 bg-blue-500 text-white rounded">Crear Reseña</button>
               </div>
             </form>
             <div>
@@ -152,17 +173,44 @@ const Movie = () => {
                     <p className="text-right text-sm text-gray-500">{review.attributes.fecha}</p>
                     <div className="p-4">
                       <div className="group relative">
-                          <button className="test inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"/>
-                          <nav tabIndex="0" className="border border-2 bg-black invisible border-white-800 rounded w-60 absolute left-0 top-full transition-all opacity-0 group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1">
-                              <ul className="py-1">
-                                  <li>
-                                      <button className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Editar reseña</button>
-                                  </li>
-                                  <li>
-                                      <button onClick={() => handleDeleteReview(review.id)} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Eliminar reseña</button>
-                                  </li>
-                              </ul>
-                          </nav>
+                        <button className="test inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"/>
+                        <nav tabIndex="0" className="border border-2 bg-black invisible border-white-800 rounded w-60 absolute left-0 top-full transition-all opacity-0 group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1">
+                          <ul className="py-1">
+                            <li>
+                              {showIt ? (<>
+                                <form onSubmit={handleUpdateReview(review.id)} className="mb-4">
+                                  <div className="text-center">
+                                    <textarea 
+                                      placeholder="Write your review..." 
+                                      className="w-full p-2 border rounded mb-2"
+                                      value={comment} 
+                                      rows="4"
+                                      onChange={(e) => setComment(e.target.value)} 
+                                    />
+                                    <input 
+                                      type="number" 
+                                      className="w-40 p-2 border rounded mb-2"
+                                      placeholder="Rating (1-10)" 
+                                      step="0.01"
+                                      min="1" 
+                                      max="10" 
+                                      value={rating} 
+                                      onChange={(e) => setRating(parseFloat(e.target.value))} 
+                                    />
+                                    <h1>
+
+                                    </h1>
+                                    <button type="submit" className="p-2 bg-blue-500 text-white rounded">Actualizar Reseña</button>
+                                  </div>
+                                </form>
+                              </>) : null}
+                              <button onClick={()=> setShowIt(!showIt)} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Editar reseña</button>
+                            </li>
+                            <li>
+                              <button onClick={() => handleDeleteReview(review.id)} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Eliminar reseña</button>
+                            </li>
+                          </ul>
+                        </nav>
                       </div>
                     </div>
                   </div>
