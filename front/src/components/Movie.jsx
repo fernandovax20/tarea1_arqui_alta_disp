@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import * as data from '../resources/url.json';
+import './Movie.css'
 
 const {url} = data;
 
@@ -13,6 +14,7 @@ const Movie = () => {
   const isAuthenticated = !!localStorage.getItem('token');
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
+  const [id_review, setIdReview] = useState(0);
 
   useEffect(() => {
     axios.get(url + '/api/peliculas')
@@ -75,6 +77,24 @@ const Movie = () => {
     }
   };
 
+  const handleDeleteReview = async (id) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('Error authenticating');
+      return;
+    }
+    try {
+      await axios.delete(url + '/api/resenias/' + id, {headers: {Authorization: `Bearer ${token}`}});
+      fetchReviews();
+    } catch (error) {
+      console.error('Error deleting the review', error);
+    }
+  };
+
+  const handleUpdateReview = async (e) => {
+    e.preventDefault();
+  };
+
   if (!movie) {
     return <div>Loading...</div>;
   }
@@ -110,10 +130,11 @@ const Movie = () => {
                   type="number" 
                   className="w-40 p-2 border rounded mb-2"
                   placeholder="Rating (1-10)" 
+                  step="0.01"
                   min="1" 
                   max="10" 
                   value={rating} 
-                  onChange={(e) => setRating(parseInt(e.target.value))} 
+                  onChange={(e) => setRating(parseFloat(e.target.value))} 
                 />
                 <h1>
 
@@ -129,6 +150,21 @@ const Movie = () => {
                     <p className="text-left text-sm text-gray-500">{review.attributes.puntuacion}</p>
                     <p>{review.attributes.texto}</p>
                     <p className="text-right text-sm text-gray-500">{review.attributes.fecha}</p>
+                    <div className="p-4">
+                      <div className="group relative">
+                          <button className="test inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"/>
+                          <nav tabIndex="0" className="border border-2 bg-black invisible border-white-800 rounded w-60 absolute left-0 top-full transition-all opacity-0 group-focus-within:visible group-focus-within:opacity-100 group-focus-within:translate-y-1">
+                              <ul className="py-1">
+                                  <li>
+                                      <button className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Editar reseña</button>
+                                  </li>
+                                  <li>
+                                      <button onClick={() => handleDeleteReview(review.id)} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Eliminar reseña</button>
+                                  </li>
+                              </ul>
+                          </nav>
+                      </div>
+                    </div>
                   </div>
                 ) : null
               ))}
