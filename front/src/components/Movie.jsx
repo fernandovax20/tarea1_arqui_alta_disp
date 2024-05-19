@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import * as data from '../resources/url.json';
 
@@ -11,6 +11,8 @@ const Movie = () => {
   const [reviews, setReviews] = useState([]);
   const [reviewContent, setReviewContent] = useState('');
   const isAuthenticated = !!localStorage.getItem('token');
+  const [comment, setComment] = useState('');
+  const [rating, setRating] = useState(0);
 
   useEffect(() => {
     axios.get(url + '/api/peliculas')
@@ -48,8 +50,20 @@ const Movie = () => {
       alert('Please log in to submit a review');
       return;
     }
+    const fecha = new Date().toJSON().slice(0, 10);
+    const id_emisor = localStorage.getItem('id');
+    const emisor = localStorage.getItem('name');
     try {
-      await axios.post(url + '/api/resenias', { movieId: id, content: reviewContent }, {
+      const pelicula = { id: id }
+      const data = {
+        pelicula: pelicula,
+        texto: comment,
+        fecha: fecha,
+        id_emisor: id_emisor,
+        emisor: emisor,
+        puntuacion: rating
+      }
+      await axios.post(url + '/api/resenias', { data: data }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -81,29 +95,61 @@ const Movie = () => {
 
       <div className="mt-10">
         <h2 className="text-2xl font-bold mb-4">Reseñas</h2>
-        {!isAuthenticated ? (
+        {isAuthenticated ? (
           <>
             <form onSubmit={handleReviewSubmit} className="mb-4">
-              <textarea
-                value={reviewContent}
-                onChange={(e) => setReviewContent(e.target.value)}
-                placeholder="Escribe tu reseña"
-                className="w-full p-2 border rounded mb-2"
-                rows="4"
-              />
-              <button type="submit" className="p-2 bg-blue-500 text-white rounded">Submit Review</button>
+              <div className="text-center">
+                <textarea 
+                  placeholder="Write your review..." 
+                  className="w-full p-2 border rounded mb-2"
+                  value={comment} 
+                  rows="4"
+                  onChange={(e) => setComment(e.target.value)} 
+                />
+                <input 
+                  type="number" 
+                  className="w-40 p-2 border rounded mb-2"
+                  placeholder="Rating (1-10)" 
+                  min="1" 
+                  max="10" 
+                  value={rating} 
+                  onChange={(e) => setRating(parseInt(e.target.value))} 
+                />
+                <h1>
+
+                </h1>
+                <button type="submit" className="p-2 bg-blue-500 text-white rounded">Submit Review</button>
+              </div>
             </form>
             <div>
               {reviews.map((review, index) => (
-                <div key={review.id} className="mb-4 p-4 border rounded">
-                  <p>{review.attributes.texto}</p>
-                  <p className="text-right text-sm text-gray-500">- {review.attributes.emisor}</p>
-                </div>
+                review.attributes.id_emisor == localStorage.getItem('id') ? (
+                  <div key={review.id} className="mb-4 p-4 border rounded">
+                    <p className="text-left text-sm text-gray-500">- {review.attributes.emisor}</p>
+                    <p className="text-left text-sm text-gray-500">{review.attributes.puntuacion}</p>
+                    <p>{review.attributes.texto}</p>
+                    <p className="text-right text-sm text-gray-500">{review.attributes.fecha}</p>
+                  </div>
+                ) : null
+              ))}
+              {reviews.map((review, index) => (
+                review.attributes.id_emisor != localStorage.getItem('id') ? (
+                  <div key={review.id} className="mb-4 p-4 border rounded">
+                    <p className="text-left text-sm text-gray-500">- {review.attributes.emisor}</p>
+                    <p className="text-left text-sm text-gray-500">{review.attributes.puntuacion}</p>
+                    <p>{review.attributes.texto}</p>
+                    <p className="text-right text-sm text-gray-500">{review.attributes.fecha}</p>
+                  </div>
+                ) : null
               ))}
             </div>
           </>
         ) : (
-          <></>
+          <>
+            <div className="text-center">
+              <h1>Para escribir una reseña <Link to="/register" className="text-gray-300 hover:text-white">Registrese</Link> o <Link to="/login" className="text-gray-300 hover:text-white">Inicie sesión</Link></h1>
+            </div>
+          </>
         )}
       </div>
     </div>
