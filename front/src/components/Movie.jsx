@@ -91,7 +91,7 @@ const Movie = () => {
     }
   };
 
-  const handleUpdateReview = id => async (e) => {
+  const handleUpdateReview = id_review => async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
     if (!token) {
@@ -103,7 +103,7 @@ const Movie = () => {
         texto: comment,
         puntuacion: rating
       }
-      await axios.put(url + '/api/resenias/' + id, { data: data }, {
+      await axios.put(url + '/api/resenias/' + id_review, { data: data }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
