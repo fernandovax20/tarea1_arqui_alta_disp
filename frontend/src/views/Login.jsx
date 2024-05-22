@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import * as data from '../resources/url.json';
+import * as data from '../config/url.json';
 
 const {url} = data;
 

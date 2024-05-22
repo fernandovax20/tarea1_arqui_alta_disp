@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import * as data from '../resources/url.json';
+import * as data from '../config/url.json';
 
 const {url} = data;
 

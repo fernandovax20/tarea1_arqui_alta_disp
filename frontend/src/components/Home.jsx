@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import * as data from '../resources/url.json';
+import * as data from '../config/url.json';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 

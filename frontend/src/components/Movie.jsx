@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import * as data from '../resources/url.json';
+import * as data from '../config/url.json';
 import './Movie.css'
 
 const {url} = data;
