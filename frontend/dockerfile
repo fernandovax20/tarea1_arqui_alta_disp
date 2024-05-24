@@ -10,12 +10,21 @@ COPY package.json package-lock.json ./
 # Instala todas las dependencias
 RUN npm install
 
+# Variables de entorno
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+ARG VITE_API_PORT
+ENV VITE_API_PORT=$VITE_API_PORT
+ARG VITE_FRONT_PORT
+ENV VITE_FRONT_PORT=$VITE_FRONT_PORT
+
 # Copia el resto del código fuente del proyecto
 COPY . .
 
 # Expone el puerto 5173
-EXPOSE 5173
+EXPOSE ${VITE_FRONT_PORT}
 
+# Establece el directorio de trabajo en el contenedor
 WORKDIR /app/frontend
 
 # Comando para iniciar la aplicación

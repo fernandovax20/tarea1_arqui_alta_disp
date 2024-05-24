@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import * as data from '../config/url.json';
 
-const {url} = data;
+const url = import.meta.env.VITE_API_URL;
+const port = import.meta.env.VITE_API_PORT;
+const api = url + ':' + port;
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(url + '/api/auth/local/register', formData);
+      await axios.post(api + '/api/auth/local/register', formData);
       alert('Registration successful');
     } catch (error) {
       alert('Registration failed');

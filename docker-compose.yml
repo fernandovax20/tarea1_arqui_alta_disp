@@ -47,19 +47,22 @@ services:
       - strapi
       
   react:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+        - VITE_API_PORT=${VITE_API_PORT}
+        - VITE_FRONT_PORT=${VITE_FRONT_PORT}
     restart: unless-stopped
     container_name: react
-    # env_file: .env
+    env_file: .env
     ports:
-      - "5173:5173"
+      - ${VITE_FRONT_PORT}:${VITE_FRONT_PORT}
     volumes:
       - .:/app
       - /app/node_modules
     environment:
       - NODE_ENV=development
-    # networks:
-    #   - strapi
 
 volumes:
   strapi-data:

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import * as data from '../config/url.json';
 import './Movie.css'
 
-const {url} = data;
+const url = import.meta.env.VITE_API_URL;
+const port = import.meta.env.VITE_API_PORT;
+const api = url + ':' + port;
 
 const Movie = () => {
   const { id } = useParams();
@@ -16,7 +17,7 @@ const Movie = () => {
   const [showIt, setShowIt] = useState(false);
 
   useEffect(() => {
-    axios.get(url + '/api/peliculas')
+    axios.get(api + '/api/peliculas')
       .then(response => {
         const selectedMovie = response.data.data.find(movie => movie.id === parseInt(id));
         setMovie(selectedMovie);
@@ -30,7 +31,7 @@ const Movie = () => {
   const fetchReviews = () => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get(url + `/api/peliculas?populate=*`, {headers: {Authorization: `Bearer ${token}`}})
+      axios.get(api + `/api/peliculas?populate=*`, {headers: {Authorization: `Bearer ${token}`}})
         .then(response => {
           const selectedReviews = response.data.data.find(movie => movie.id === parseInt(id));
           setReviews(selectedReviews.attributes.resenias.data);
@@ -64,7 +65,7 @@ const Movie = () => {
         emisor: emisor,
         puntuacion: rating
       }
-      await axios.post(url + '/api/resenias', { data: data }, {
+      await axios.post(api + '/api/resenias', { data: data }, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -84,7 +85,7 @@ const Movie = () => {
       return;
     }
     try {
-      await axios.delete(url + '/api/resenias/' + id, {headers: {Authorization: `Bearer ${token}`}});
+      await axios.delete(api + '/api/resenias/' + id, {headers: {Authorization: `Bearer ${token}`}});
       fetchReviews();
     } catch (error) {
       console.error('Error deleting the review', error);
@@ -103,7 +104,7 @@ const Movie = () => {
         texto: comment,
         puntuacion: rating
       }
-      await axios.put(url + '/api/resenias/' + id_review, { data: data }, {
+      await axios.put(api + '/api/resenias/' + id_review, { data: data }, {
         headers: {
           Authorization: `Bearer ${token}`
         }

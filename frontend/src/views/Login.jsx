@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import * as data from '../config/url.json';
 
-const {url} = data;
+const url = import.meta.env.VITE_API_URL;
+const port = import.meta.env.VITE_API_PORT;
+const api = url + ':' + port;
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(url + '/api/auth/local', formData);
+      const response = await axios.post(api + '/api/auth/local', formData);
       localStorage.setItem('token', response.data.jwt);
       localStorage.setItem('name', response.data.user.username);
       localStorage.setItem('id', response.data.user.id);
