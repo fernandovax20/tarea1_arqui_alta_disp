@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import * as data from '../resources/url.json';
 
-const {url} = data;
+const url = import.meta.env.VITE_API_URL;
+const port = import.meta.env.VITE_API_PORT;
+const api = url + ':' + port;
 
-const Login = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
-    identifier: '',
+    username: '',
+    email: '',
     password: '',
   });
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -22,23 +22,29 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(url + '/api/auth/local', formData);
-      localStorage.setItem('token', response.data.jwt);
-      localStorage.setItem('name', response.data.user.username);
-      navigate('/');
+      await axios.post(api + '/api/auth/local/register', formData);
+      alert('Registration successful');
     } catch (error) {
-      alert('Login failed');
+      alert('Registration failed');
     }
   };
 
   return (
     <div className="flex items-center justify-center h-screen">
       <form onSubmit={handleSubmit} className="p-8 bg-white shadow-md rounded">
-        <h1 className="mb-6 text-2xl font-bold">Login</h1>
+        <h1 className="mb-6 text-2xl font-bold">Register</h1>
+        <input
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          placeholder="Username"
+          className="mb-4 p-2 border rounded"
+        />
         <input
           type="email"
-          name="identifier"
-          value={formData.identifier}
+          name="email"
+          value={formData.email}
           onChange={handleChange}
           placeholder="Email"
           className="mb-4 p-2 border rounded"
@@ -51,10 +57,10 @@ const Login = () => {
           placeholder="Password"
           className="mb-4 p-2 border rounded"
         />
-        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">Login</button>
+        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">Register</button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

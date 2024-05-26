@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import * as data from '../resources/url.json';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-const {url} = data;
+const url = import.meta.env.VITE_API_URL;
+const port = import.meta.env.VITE_API_PORT;
+const api = url + ':' + port;
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    axios.get(url + '/api/peliculas')
+    axios.get(api + '/api/peliculas')
       .then(response => {
         setMovies(response.data.data);
       })

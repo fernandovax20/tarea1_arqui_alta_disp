@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import * as data from '../resources/url.json';
+import { useNavigate } from 'react-router-dom';
 
-const {url} = data;
+const url = import.meta.env.VITE_API_URL;
+const port = import.meta.env.VITE_API_PORT;
+const api = url + ':' + port;
 
-const Register = () => {
+const Login = () => {
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
+    identifier: '',
     password: '',
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -21,29 +23,24 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(url + '/api/auth/local/register', formData);
-      alert('Registration successful');
+      const response = await axios.post(api + '/api/auth/local', formData);
+      localStorage.setItem('token', response.data.jwt);
+      localStorage.setItem('name', response.data.user.username);
+      localStorage.setItem('id', response.data.user.id);
+      navigate('/');
     } catch (error) {
-      alert('Registration failed');
+      alert('Login failed');
     }
   };
 
   return (
     <div className="flex items-center justify-center h-screen">
       <form onSubmit={handleSubmit} className="p-8 bg-white shadow-md rounded">
-        <h1 className="mb-6 text-2xl font-bold">Register</h1>
-        <input
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          placeholder="Username"
-          className="mb-4 p-2 border rounded"
-        />
+        <h1 className="mb-6 text-2xl font-bold">Login</h1>
         <input
           type="email"
-          name="email"
-          value={formData.email}
+          name="identifier"
+          value={formData.identifier}
           onChange={handleChange}
           placeholder="Email"
           className="mb-4 p-2 border rounded"
@@ -56,10 +53,10 @@ const Register = () => {
           placeholder="Password"
           className="mb-4 p-2 border rounded"
         />
-        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">Register</button>
+        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">Login</button>
       </form>
     </div>
   );
 };
 
-export default Register;
+export default Login;
